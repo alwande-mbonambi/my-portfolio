@@ -232,5 +232,11 @@ User question: {user_question}
     print(f"All Gemini models failed. Last error: {last_error}")
     return jsonify({"answer": f"Sorry, I'm having technical issues. Error: {str(last_error)}"}), 200
 
+@app.route('/ping')
+def ping():
+    # This is a simple health check endpoint
+    return "OK", 200
+
+
 if __name__ == '__main__':
     app.run(debug=True)
