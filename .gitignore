@@ -1,0 +1,13 @@
+# Python
+__pycache__/
+*.pyc
+.env
+serviceAccountKey.json
+
+# Testing
+.pytest_cache/
+tests/dummy.*
+
+# IDE
+.vscode/
+.idea/

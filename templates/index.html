@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Alwande Mbonambi's Portfolio</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --accent: #d4af37;
+            --dark: #1a202c;
+            --light: #fdfbf7;
+            --gray: #edf2f7;
+            --text: #2d3748;
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, sans-serif;
+        }
+        body {
+            background: var(--light);
+            color: var(--text);
+            scroll-behavior: smooth;
+        }
+        
+        /* --- NAVIGATION (Desktop) --- */
+        nav {
+            position: sticky;
+            top: 0;
+            background: white;
+            padding: 0.8rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            z-index: 1000;
+            flex-wrap: wrap;
+        }
+        .nav-left {
+            display: flex;
+            align-items: center;
+        }
+        .nav-right {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        nav a {
+            text-decoration: none;
+            color: var(--dark);
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+        .nav-cv-btn {
+            background: var(--accent);
+            color: var(--dark) !important;
+            padding: 6px 14px;
+            border-radius: 40px;
+            margin-left: 0;
+        }
+        /* Mobile menu button */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: var(--dark);
+        }
+        
+        /* --- SECTIONS --- */
+        section {
+            padding: 60px 5%;
+        }
+        h2 {
+            font-size: 1.8rem;
+            border-left: 4px solid var(--accent);
+            padding-left: 15px;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+        }
+        
+        /* Profile */
+        .profile-wrapper {
+            display: flex;
+            gap: 40px;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .profile-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+        .profile-circle {
+            width: 220px;
+            height: 220px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 4px solid var(--accent);
+            position: relative;
+            background: #eee;
+        }
+        .profile-circle img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform-origin: center;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        .home-content {
+            flex: 1;
+            min-width: 260px;
+        }
+        #p-name {
+            font-size: 2.5rem;
+            cursor: pointer;
+        }
+        
+        /* Grid layout */
+        .grid-layout {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
+        }
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            transition: all 0.25s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 35px -10px rgba(0,0,0,0.12);
+        }
+        
+        /* Admin & buttons */
+        .admin-only {
+            display: none !important;
+        }
+        body.admin-mode .admin-only {
+            display: block !important;
+        }
+        .admin-controls {
+            background: #f7fafc;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border: 1px dashed #cbd5e0;
+        }
+        .btn-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        .mini-btn {
+            padding: 8px 18px;
+            font-size: 0.75rem;
+            border-radius: 40px;
+            text-decoration: none;
+            background: var(--dark);
+            color: white;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .mini-btn.accent {
+            background: var(--accent);
+            color: var(--dark);
+        }
+        .btn-del {
+            background: #e53e3e;
+            color: white;
+            padding: 6px 14px;
+            border-radius: 40px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.7rem;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            font-size: 0.85rem;
+        }
+        
+        /* Contact */
+        .contact-icon-img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+        .social-bar {
+            display: flex;
+            gap: 25px;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-top: 30px;
+        }
+        .social-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+        #auth-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            z-index: 2000;
+            box-shadow: 0 0 100px rgba(0,0,0,0.3);
+            width: 280px;
+        }
+        
+        /* Keyword hover */
+        .tag, .card span[style*="background:var(--gray)"] {
+            display: inline-block;
+            transition: transform 0.15s ease;
+        }
+        .tag:hover, .card span[style*="background:var(--gray)"]:hover {
+            transform: scale(1.02);
+        }
+        
+        /* Chatbot */
+        .chatbot-icon {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 55px;
+            height: 55px;
+            background: var(--accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 1000;
+            transition: transform 0.2s;
+        }
+        .chatbot-icon:hover { transform: scale(1.05); }
+        .chatbot-window {
+            position: fixed;
+            bottom: 85px;
+            right: 20px;
+            width: 340px;
+            height: 500px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: none;
+            flex-direction: column;
+            z-index: 1001;
+            overflow: hidden;
+        }
+        .chatbot-header {
+            background: var(--dark);
+            color: white;
+            padding: 12px 15px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+        }
+        .chatbot-messages {
+            flex: 1;
+            padding: 12px;
+            overflow-y: auto;
+            background: #f9f9f9;
+        }
+        .message { margin-bottom: 12px; display: flex; }
+        .message.user { justify-content: flex-end; }
+        .message.bot .bubble { background: var(--accent); color: var(--dark); }
+        .message.user .bubble { background: var(--dark); color: white; }
+        .bubble {
+            max-width: 80%;
+            padding: 10px 14px;
+            border-radius: 18px;
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+        .chatbot-input {
+            display: flex;
+            border-top: 1px solid #ddd;
+            padding: 10px;
+            background: white;
+        }
+        .chatbot-input input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 40px;
+            margin: 0;
+        }
+        .chatbot-input button {
+            background: var(--accent);
+            border: none;
+            border-radius: 40px;
+            margin-left: 8px;
+            padding: 0 16px;
+            cursor: pointer;
+        }
+        
+        /* --- MOBILE RESPONSIVE STYLES --- */
+        @media (max-width: 768px) {
+            nav {
+                padding: 0.8rem 5%;
+            }
+            .nav-right {
+                display: none;
+                width: 100%;
+                flex-direction: column;
+                gap: 12px;
+                margin-top: 15px;
+                padding-bottom: 10px;
+            }
+            .nav-right.show {
+                display: flex;
+            }
+            .mobile-menu-btn {
+                display: block;
+            }
+            .nav-right a, .nav-right button {
+                width: 100%;
+                text-align: center;
+                white-space: normal;
+            }
+            .nav-cv-btn {
+                display: inline-block;
+                width: auto !important;
+            }
+            
+            section {
+                padding: 40px 5%;
+            }
+            h2 {
+                font-size: 1.5rem;
+                margin-bottom: 20px;
+            }
+            .profile-wrapper {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+            .profile-circle {
+                width: 160px;
+                height: 160px;
+            }
+            #p-name {
+                font-size: 1.8rem;
+            }
+            .grid-layout {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            .card {
+                padding: 18px;
+            }
+            .chatbot-window {
+                width: calc(100% - 40px);
+                right: 20px;
+                left: auto;
+                bottom: 80px;
+                height: 450px;
+            }
+            .chatbot-icon {
+                width: 50px;
+                height: 50px;
+                bottom: 15px;
+                right: 15px;
+            }
+            
+            /* Compact contact section on mobile */
+            .contact-text-item {
+                flex-direction: row !important;
+                align-items: center !important;
+                gap: 12px !important;
+                padding: 8px 0 !important;
+            }
+            .contact-text-item > div:first-child {
+                width: 32px !important;
+                height: 32px !important;
+                font-size: 1.2rem !important;
+            }
+            .contact-text-item span:first-of-type {
+                font-size: 0.7rem !important;
+            }
+            .contact-text-item span[id*="contact-"] {
+                font-size: 0.9rem !important;
+            }
+            .social-bar {
+                gap: 15px;
+                margin-top: 20px;
+            }
+            .social-item {
+                width: 60px;
+            }
+            .contact-icon-img {
+                width: 40px;
+                height: 40px;
+            }
+            .social-item span {
+                font-size: 0.7rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .chatbot-window {
+                width: calc(100% - 30px);
+                right: 15px;
+                bottom: 70px;
+                height: 420px;
+            }
+            .bubble {
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="nav-left">
+        <a id="nav-cv-btn" href="#" target="_blank" class="nav-cv-btn mini-btn accent" style="display:none;"><i class="fas fa-file-pdf"></i> View CV</a>
+    </div>
+    <button class="mobile-menu-btn" id="mobile-menu-btn"><i class="fas fa-bars"></i></button>
+    <div class="nav-right" id="nav-right">
+        <a href="#home">Home</a>
+        <a href="#qual">Qualifications</a>
+        <a href="#skills">Skills</a>
+        <a href="#projects">Projects</a>
+        <a href="#certs">Certificates</a>
+        <a href="#exp">Experience</a>
+        <a href="#contact">Contact</a>
+        <!-- Admin-only link to AI Knowledge section -->
+        <a href="#ai-knowledge" class="admin-only" style="display:none;">Chatbot</a>
+        <button id="save-btn" class="admin-only mini-btn accent" onclick="saveData()" style="margin-left: 0;">SYNC DATA</button>
+        <button id="logout-btn" class="admin-only mini-btn" onclick="logout()">Logout</button>
+    </div>
+</nav>
+
+<section id="home">
+    <div class="profile-wrapper">
+        <div class="profile-container">
+            <div class="profile-circle">
+                <img id="p-img" src="" alt="Profile">
+            </div>
+            <div class="admin-only" style="width: 100%;">
+                <input type="file" onchange="handleUpload(this, 'profile')">
+                <div style="font-size: 0.7rem; margin-top:10px; background: #eee; padding: 10px; border-radius: 8px;">
+                    Zoom: <input type="range" min="1" max="4" step="0.01" id="z-in" oninput="updateProfileStyle()"><br>
+                    Horiz: <input type="range" min="-100" max="100" step="1" id="x-in" oninput="updateProfileStyle()"><br>
+                    Vert: <input type="range" min="-100" max="100" step="1" id="y-in" oninput="updateProfileStyle()">
+                </div>
+            </div>
+        </div>
+        <div class="home-content">
+            <h1 id="p-name" style="font-size: 2.5rem; cursor: pointer;">Name</h1>
+            <h3 id="p-job" style="color: var(--accent); margin: 8px 0;">Occupation</h3>
+            <p id="p-desc" style="white-space: pre-wrap; margin: 20px 0; line-height: 1.6;"></p>
+            <div class="btn-row">
+                <a id="cv-btn" href="#" target="_blank" class="mini-btn accent" style="display:none;"><i class="fas fa-file-pdf"></i> View CV</a>
+                <div class="admin-only admin-controls" style="margin-top:0;">
+                    Upload CV: <input type="file" onchange="handleUpload(this, 'cv')">
+                    <button class="btn-del" onclick="dbData.cvUrl=''; render()">Remove CV</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="qual" style="background: #f8fafc;">
+    <h2>Qualifications</h2>
+    <div id="qual-list" class="grid-layout"></div>
+    <button class="admin-only mini-btn accent" type="button" onclick="addObj('qual')" style="margin-top:20px;">+ Add Qualification</button>
+</section>
+
+<section id="skills">
+    <h2>Skills & Mastery</h2>
+    <div id="skills-container" class="grid-layout"></div>
+    <button class="admin-only mini-btn accent" type="button" onclick="addObj('skill-cat')" style="margin-top:20px;">+ Add Category</button>
+</section>
+
+<section id="projects" style="background: #f8fafc;">
+    <h2>Projects</h2>
+    <div id="project-list" class="grid-layout"></div>
+    <button class="admin-only mini-btn accent" type="button" onclick="addObj('project')" style="margin-top:20px;">+ Add Project</button>
+</section>
+
+<section id="certs">
+    <h2>Certificates</h2>
+    <div id="cert-list" class="grid-layout"></div>
+    <button class="admin-only mini-btn accent" type="button" onclick="addObj('cert')" style="margin-top:20px;">+ Add Certificate</button>
+</section>
+
+<section id="exp">
+    <h2>Experience</h2>
+    <div id="exp-list" class="grid-layout"></div>
+    <button class="admin-only mini-btn accent" type="button" onclick="addObj('exp')" style="margin-top:20px;">+ Add Work Experience</button>
+</section>
+
+<section id="contact" style="background: var(--dark); color: white;">
+    <h2 style="color: white; border-color: white;">Get In Touch</h2>
+    <div id="contact-text-list" style="display: flex; flex-direction: column; gap: 15px;">
+        <div class="contact-text-item" style="display: flex; align-items: center; gap: 15px; padding: 10px 0; flex-wrap: wrap;">
+            <div style="width: 42px; height: 42px; background: rgba(255,255,255,0.1); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;"><i class="fas fa-envelope"></i></div>
+            <div style="display:flex; flex-direction:column;">
+                <span style="font-size:0.8rem; opacity:0.7;">Email</span>
+                <span id="contact-email" style="font-size:1.1rem; font-weight:500;"></span>
+                <div class="admin-only"><input id="edit-email" placeholder="Email" style="margin-top: 6px;"></div>
+            </div>
+        </div>
+        <div class="contact-text-item" style="display: flex; align-items: center; gap: 15px; padding: 10px 0; flex-wrap: wrap;">
+            <div style="width: 42px; height: 42px; background: rgba(255,255,255,0.1); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;"><i class="fas fa-phone"></i></div>
+            <div style="display:flex; flex-direction:column;">
+                <span style="font-size:0.8rem; opacity:0.7;">Phone Number</span>
+                <span id="contact-phone" style="font-size:1.1rem; font-weight:500;"></span>
+                <div class="admin-only"><input id="edit-phone" placeholder="Phone Number"></div>
+            </div>
+        </div>
+    </div>
+    <div id="social-icons-bar" class="social-bar"></div>
+    <button class="admin-only mini-btn accent" type="button" onclick="addObj('contact')" style="margin-top:40px;">+ Add Social Link</button>
+
+    <!-- AI Extra Knowledge Section (Admin only) -->
+    <div id="ai-knowledge" class="admin-only" style="margin-top: 40px; background: rgba(255,255,255,0.1); padding: 20px; border-radius: 20px;">
+        <h3 style="color: var(--accent); margin-bottom: 15px;">🧠 AI Extra Knowledge</h3>
+        <p style="font-size: 0.85rem; margin-bottom: 10px;">Add personal info (age, hometown, hobbies, background, etc.) for my chatbot answers.</p>
+        <textarea id="extra-knowledge" rows="6" placeholder="e.g., I am 25 years old, grew up in Durban, love hiking and chess..." style="width:100%; background: white; color: black;"></textarea>
+        <div style="margin-top: 15px;">
+            <label style="display: block; margin-bottom: 5px;">Upload .txt or .pdf:</label>
+            <input type="file" id="knowledge-file" accept=".txt,.pdf">
+            <button class="mini-btn accent" onclick="uploadKnowledgeFile()" style="margin-top: 10px;">Upload & Add</button>
+        </div>
+        <div style="margin-top: 15px;">
+            <button class="btn-del" onclick="clearExtraKnowledge()">Clear All Extra Knowledge</button>
+        </div>
+    </div>
+</section>
+
+<div id="auth-modal">
+    <h3>Admin Login</h3><br>
+    <input type="password" id="pass" placeholder="Password"><br><br>
+    <button class="mini-btn accent" onclick="login()">Login</button>
+</div>
+
+<!-- Chatbot UI -->
+<div class="chatbot-icon" id="chatbot-icon">
+    <img src="https://res.cloudinary.com/dhoeuapgn/image/upload/w_200,h_200,c_fill,q_auto,f_auto/v1776648269/image0_hjaep5.jpg" alt="Chatbot Avatar" style="width: 45px; height: 45px; border-radius: 50%; object-fit: cover;">
+</div>
+<div class="chatbot-window" id="chatbot-window">
+    <div class="chatbot-header">
+        <span>💬 Ask Alwande</span>
+        <span style="cursor:pointer;" id="close-chat">✕</span>
+    </div>
+    <div class="chatbot-messages" id="chat-messages"></div>
+    <div class="chatbot-input">
+        <input type="text" id="chat-input" placeholder="Type your question...">
+        <button id="send-chat">Send</button>
+    </div>
+</div>
+
+<script>
+    // -------------------- DATA MODEL --------------------
+    let dbData = {
+        name: "Alwande Mbonambi", job: "Cloud Engineer", desc: "Results-driven professional...",
+        pImg: "", pZoom: 1, pX: 0, pY: 0, cvUrl: "",
+        contactInfo: { email: "alwande.m18@gmail.com", phone: "(+27) 788188487" },
+        quals: [], skillCats: [], projects: [], certificates: [], exps: [], contacts: [],
+        extraKnowledge: ""
+    };
+    let isAdmin = false;
+
+    // -------------------- PROFILE & ADMIN --------------------
+    function updateProfileStyle() {
+        dbData.pZoom = document.getElementById('z-in').value;
+        dbData.pX = document.getElementById('x-in').value;
+        dbData.pY = document.getElementById('y-in').value;
+        const img = document.getElementById('p-img');
+        img.style.transform = `scale(${dbData.pZoom}) translate(${dbData.pX}%, ${dbData.pY}%)`;
+    }
+
+    let clicks = 0;
+    document.getElementById('p-name').onclick = () => {
+        clicks++;
+        if(clicks === 3) document.getElementById('auth-modal').style.display = 'block';
+        setTimeout(() => clicks = 0, 1500);
+    };
+
+    async function login() {
+        const password = document.getElementById('pass').value;
+        const res = await fetch('/api/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password }) });
+        if (res.ok) {
+            isAdmin = true;
+            document.body.classList.add('admin-mode');
+            document.getElementById('auth-modal').style.display = 'none';
+            await loadDataFromServer();
+            render();
+        } else alert('Wrong password');
+    }
+
+    async function logout() {
+        await fetch('/api/logout', { method: 'POST' });
+        isAdmin = false;
+        document.body.classList.remove('admin-mode');
+        render();
+    }
+
+    async function loadDataFromServer() {
+        try {
+            const res = await fetch('/api/get-data');
+            const data = await res.json();
+            if (data && data.name) dbData = data;
+            if (!dbData.contactInfo) dbData.contactInfo = { email: "", phone: "" };
+        } catch(e) { console.error(e); }
+    }
+
+    // -------------------- KNOWLEDGE UPLOAD --------------------
+    async function uploadKnowledgeFile() {
+        const fileInput = document.getElementById('knowledge-file');
+        if (!fileInput.files.length) { alert("Please select a file first."); return; }
+        const formData = new FormData();
+        formData.append('file', fileInput.files[0]);
+        try {
+            const res = await fetch('/api/upload-knowledge', { method: 'POST', body: formData });
+            const data = await res.json();
+            if (res.ok) {
+                alert(data.message);
+                await loadDataFromServer();
+                render();
+            } else alert("Error: " + data.error);
+        } catch(e) { alert("Upload failed."); }
+        fileInput.value = '';
+    }
+
+    async function clearExtraKnowledge() {
+        if (confirm("Are you sure you want to clear ALL extra knowledge?")) {
+            dbData.extraKnowledge = "";
+            document.getElementById('extra-knowledge').value = "";
+            await saveData();
+            render();
+        }
+    }
+
+    // -------------------- RENDER ALL SECTIONS --------------------
+    function render() {
+        ['quals', 'skillCats', 'projects', 'certificates', 'exps', 'contacts'].forEach(key => { if (!dbData[key]) dbData[key] = []; });
+
+        document.getElementById('p-name').innerText = dbData.name;
+        document.getElementById('p-job').innerText = dbData.job;
+        document.getElementById('p-desc').innerText = dbData.desc;
+        document.getElementById('p-name').contentEditable = isAdmin;
+        document.getElementById('p-job').contentEditable = isAdmin;
+        document.getElementById('p-desc').contentEditable = isAdmin;
+
+        const img = document.getElementById('p-img');
+        img.src = dbData.pImg || "https://via.placeholder.com/300";
+        img.style.transform = `scale(${dbData.pZoom || 1}) translate(${dbData.pX || 0}%, ${dbData.pY || 0}%)`;
+        if(isAdmin) {
+            document.getElementById('z-in').value = dbData.pZoom || 1;
+            document.getElementById('x-in').value = dbData.pX || 0;
+            document.getElementById('y-in').value = dbData.pY || 0;
+        }
+
+        const cvBtn = document.getElementById('cv-btn');
+        const navCvBtn = document.getElementById('nav-cv-btn');
+        if (dbData.cvUrl) {
+            cvBtn.style.display = 'inline-flex';
+            navCvBtn.style.display = 'inline-flex';
+            cvBtn.href = dbData.cvUrl;
+            navCvBtn.href = dbData.cvUrl;
+        } else {
+            cvBtn.style.display = 'none';
+            navCvBtn.style.display = 'none';
+        }
+
+        // Contact display
+        document.getElementById('contact-email').innerText = dbData.contactInfo?.email || "";
+        document.getElementById('contact-phone').innerText = dbData.contactInfo?.phone || "";
+        if (isAdmin) {
+            const emailInput = document.getElementById('edit-email');
+            const phoneInput = document.getElementById('edit-phone');
+            if (emailInput) {
+                emailInput.value = dbData.contactInfo?.email || "";
+                emailInput.oninput = (e) => {
+                    dbData.contactInfo.email = e.target.value;
+                    document.getElementById('contact-email').innerText = dbData.contactInfo.email;
+                };
+            }
+            if (phoneInput) {
+                phoneInput.value = dbData.contactInfo?.phone || "";
+                phoneInput.oninput = (e) => {
+                    dbData.contactInfo.phone = e.target.value;
+                    document.getElementById('contact-phone').innerText = dbData.contactInfo.phone;
+                };
+            }
+        }
+
+        const extraTextarea = document.getElementById('extra-knowledge');
+        if (extraTextarea) {
+            extraTextarea.value = dbData.extraKnowledge || "";
+            extraTextarea.onchange = (e) => { dbData.extraKnowledge = e.target.value; render(); };
+        }
+
+        // Qualifications
+        const qL = document.getElementById('qual-list'); qL.innerHTML = "";
+        dbData.quals.forEach((q, i) => {
+            qL.innerHTML += `
+                <div class="card">
+                    <div>
+                        <h3>${escapeHtml(q.name)}</h3>
+                        <p style="font-size:0.9rem; color:#718096;">${escapeHtml(q.inst)}</p>
+                        <p style="font-size:0.8rem; margin:5px 0;">${q.start} - ${q.end} | Duration: ${q.dur}</p>
+                        <p style="font-weight:bold; color:var(--accent);">Average: ${q.avg}</p>
+                        <div style="margin-top:10px;"><div style="display:flex; flex-wrap:wrap; gap:8px;">
+                            ${(q.mods || []).map((m, mi) => `<span style="background:#edf2f7; padding:4px 8px; border-radius:4px; font-size:0.75rem; display:inline-block; transition:transform 0.15s;">${escapeHtml(m.n)} <b style="color:#2b6cb0">(${m.g}%)</b> ${isAdmin ? `<i class="fas fa-times" style="color:red; margin-left:5px; cursor:pointer;" onclick="dbData.quals[${i}].mods.splice(${mi},1); render()"></i>`:''}</span>`).join('')}
+                        </div></div>
+                    </div>
+                    <div class="btn-row">
+                        ${q.certUrl ? `<a href="${q.certUrl}" target="_blank" class="mini-btn">View Certificate</a>` : ''}
+                        ${q.recUrl ? `<a href="${q.recUrl}" target="_blank" class="mini-btn">Academic Record</a>` : ''}
+                    </div>
+                    <div class="admin-only admin-controls">
+                        <input value="${escapeHtml(q.name)}" onblur="dbData.quals[${i}].name=this.value" placeholder="Deg Name">
+                        <input value="${escapeHtml(q.inst)}" onblur="dbData.quals[${i}].inst=this.value" placeholder="Inst">
+                        <div style="display:flex; gap:5px;"><input placeholder="Start" value="${q.start}" onblur="dbData.quals[${i}].start=this.value"><input placeholder="End" value="${q.end}" onblur="dbData.quals[${i}].end=this.value"></div>
+                        <input value="${q.dur}" onblur="dbData.quals[${i}].dur=this.value" placeholder="Duration">
+                        <input value="${q.avg}" onblur="dbData.quals[${i}].avg=this.value" placeholder="Avg%">
+                        <div style="display:flex; gap:5px;"><input id="m-n-${i}" placeholder="Module"><input id="m-g-${i}" placeholder="%" style="width:50px;"><button type="button" class="mini-btn" onclick="addMod(${i})">+</button></div>
+                        Cert: <input type="file" onchange="handleUpload(this, 'q-c', ${i})"> ${q.certUrl ? `<button class="btn-del" onclick="dbData.quals[${i}].certUrl=''; render()">Delete File</button>`:''}
+                        Rec: <input type="file" onchange="handleUpload(this, 'q-r', ${i})"> ${q.recUrl ? `<button class="btn-del" onclick="dbData.quals[${i}].recUrl=''; render()">Delete File</button>`:''}
+                        <button class="btn-del" style="margin-top:10px; width:100%;" onclick="dbData.quals.splice(${i},1); render()">Delete Qualification Entry</button>
+                    </div>
+                </div>`;
+        });
+
+        // Skills
+        const sC = document.getElementById('skills-container'); sC.innerHTML = "";
+        dbData.skillCats.forEach((cat, i) => {
+            let h = `<div class="card"><h4 style="margin-bottom:15px; border-bottom:1px solid #eee; padding-bottom:5px;">${escapeHtml(cat.cat)}</h4>`;
+            (cat.items || []).forEach((s, si) => {
+                h += `<div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:0.9rem;">
+                    <span>${escapeHtml(s.n)}</span>
+                    <div style="display:flex; align-items:center; gap:5px;">
+                        ${[1,2,3,4,5].map(v => `<span style="color:${v<=s.s?'var(--accent)':'#cbd5e0'}; cursor:${isAdmin?'pointer':'default'}" onclick="${isAdmin ? `dbData.skillCats[${i}].items[${si}].s=${v}; render()` : ''}">★</span>`).join('')}
+                        ${isAdmin ? `<i class="fas fa-trash" style="color:red; cursor:pointer; font-size:0.7rem;" onclick="dbData.skillCats[${i}].items.splice(${si},1); render()"></i>` : ''}
+                    </div>
+                </div>`;
+            });
+            if(isAdmin) {
+                h += `<div class="admin-only admin-controls">
+                    <input value="${escapeHtml(cat.cat)}" onblur="dbData.skillCats[${i}].cat=this.value" placeholder="Cat Name">
+                    <button class="mini-btn" type="button" onclick="dbData.skillCats[${i}].items.push({n:'Skill',s:3}); render()">+ Skill</button>
+                    <button class="btn-del" onclick="dbData.skillCats.splice(${i},1); render()">Delete Cat</button>
+                </div>`;
+            }
+            h += `</div>`; sC.innerHTML += h;
+        });
+
+        // Projects
+        const pL = document.getElementById('project-list'); pL.innerHTML = "";
+        dbData.projects.forEach((p, i) => {
+            pL.innerHTML += `
+                <div class="card">
+                    <img src="${p.img || 'https://via.placeholder.com/400x200'}" style="width:100%; height:160px; object-fit:cover; border-radius:8px; margin-bottom:15px;">
+                    <h3>${escapeHtml(p.name)}</h3>
+                    <p style="font-size:0.85rem; margin:10px 0; flex-grow:1;">${escapeHtml(p.desc)}</p>
+                    <div style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:10px;">
+                        ${(p.keywords || []).map((k, ki) => `<span style="background:var(--gray); padding:2px 8px; border-radius:12px; font-size:0.75rem; display:inline-block; transition:transform 0.15s;">${escapeHtml(k)} ${isAdmin ? `<i class="fas fa-times" style="color:red; cursor:pointer;" onclick="dbData.projects[${i}].keywords.splice(${ki},1); render()"></i>`:''}</span>`).join('')}
+                    </div>
+                    <div class="btn-row">
+                        ${p.git ? `<a href="${p.git}" target="_blank" class="mini-btn"><i class="fab fa-github"></i> Source</a>` : ''}
+                        ${p.live ? `<a href="${p.live}" target="_blank" class="mini-btn accent"><i class="fas fa-link"></i> Live</a>` : ''}
+                    </div>
+                    <div class="admin-only admin-controls">
+                        <input value="${escapeHtml(p.name)}" onblur="dbData.projects[${i}].name=this.value" placeholder="Name">
+                        <textarea onblur="dbData.projects[${i}].desc=this.value" placeholder="Desc">${escapeHtml(p.desc)}</textarea>
+                        <div style="display:flex; gap:5px;"><input id="p-k-${i}" placeholder="Add Keyword"><button type="button" class="mini-btn" onclick="addKeyword(${i})">+</button></div>
+                        Img: <input type="file" onchange="handleUpload(this, 'p-img', ${i})">
+                        <input placeholder="Github Link" value="${p.git}" onblur="dbData.projects[${i}].git=this.value">
+                        <input placeholder="Live Link" value="${p.live}" onblur="dbData.projects[${i}].live=this.value">
+                        <button class="btn-del" onclick="dbData.projects.splice(${i},1); render()">Delete Project</button>
+                    </div>
+                </div>`;
+        });
+
+        // Certificates
+        const certL = document.getElementById('cert-list'); certL.innerHTML = "";
+        dbData.certificates.forEach((c, i) => {
+            certL.innerHTML += `
+                <div class="card">
+                    <h3>${escapeHtml(c.name)}</h3>
+                    <p style="font-size:0.85rem; color:#718096;">${escapeHtml(c.issuer)} | ${c.date}</p>
+                    <div style="display:flex; flex-wrap:wrap; gap:5px; margin:10px 0;">
+                        ${(c.skills || []).map((s, si) => `<span style="background:var(--gray); padding:2px 8px; border-radius:12px; font-size:0.75rem; display:inline-block; transition:transform 0.15s;">${escapeHtml(s)} ${isAdmin ? `<i class="fas fa-times" style="color:red; cursor:pointer;" onclick="dbData.certificates[${i}].skills.splice(${si},1); render()"></i>`:''}</span>`).join('')}
+                    </div>
+                    <div class="btn-row">
+                        ${c.url ? `<a href="${c.url}" target="_blank" class="mini-btn accent">View Certificate</a>` : ''}
+                    </div>
+                    <div class="admin-only admin-controls">
+                        <input placeholder="Name" value="${escapeHtml(c.name)}" onblur="dbData.certificates[${i}].name=this.value">
+                        <input placeholder="Issuer" value="${escapeHtml(c.issuer)}" onblur="dbData.certificates[${i}].issuer=this.value">
+                        <input placeholder="Date" value="${c.date}" onblur="dbData.certificates[${i}].date=this.value">
+                        <div style="display:flex; gap:5px;"><input id="c-s-${i}" placeholder="Add Skill/Keyword"><button type="button" class="mini-btn" onclick="addCertSkill(${i})">+</button></div>
+                        File: <input type="file" onchange="handleUpload(this, 'standalone-cert', ${i})">
+                        <button class="btn-del" onclick="dbData.certificates.splice(${i},1); render()">Delete Certificate</button>
+                    </div>
+                </div>`;
+        });
+
+        // Experience
+        const eL = document.getElementById('exp-list'); eL.innerHTML = "";
+        dbData.exps.forEach((e, i) => {
+            eL.innerHTML += `
+                <div class="card" style="margin-bottom:15px;">
+                    <div style="display:flex; justify-content:space-between;"><b>${escapeHtml(e.role)}</b> <span>${e.start} - ${e.end}</span></div>
+                    <p style="color:var(--accent); font-weight:600;">${escapeHtml(e.company)}</p>
+                    <p style="font-size:0.9rem; margin-top:10px; white-space:pre-wrap;">${escapeHtml(e.tasks)}</p>
+                    <div class="admin-only admin-controls">
+                        <input value="${escapeHtml(e.role)}" onblur="dbData.exps[${i}].role=this.value" placeholder="Role">
+                        <input value="${escapeHtml(e.company)}" onblur="dbData.exps[${i}].company=this.value" placeholder="Company">
+                        <div style="display:flex; gap:5px;"><input placeholder="Start" value="${e.start}" onblur="dbData.exps[${i}].start=this.value"><input placeholder="End" value="${e.end}" onblur="dbData.exps[${i}].end=this.value"></div>
+                        <textarea onblur="dbData.exps[${i}].tasks=this.value" placeholder="Tasks">${escapeHtml(e.tasks)}</textarea>
+                        <button class="btn-del" onclick="dbData.exps.splice(${i},1); render()">Delete Experience</button>
+                    </div>
+                </div>`;
+        });
+
+        // Social contacts
+        const socialBar = document.getElementById('social-icons-bar');
+        socialBar.innerHTML = "";
+        dbData.contacts.forEach((c, i) => {
+            socialBar.innerHTML += `
+                <div class="social-item">
+                    <a href="${c.url}" target="_blank" style="text-decoration:none; color:white; display:flex; flex-direction:column; align-items:center; gap:5px;">
+                        <img src="${c.icon || 'https://via.placeholder.com/50'}" class="contact-icon-img">
+                        <span style="font-size:0.8rem; opacity:0.9;">${escapeHtml(c.label)}</span>
+                    </a>
+                    <div class="admin-only admin-controls" style="width:200px;">
+                        <input placeholder="Label (e.g. LinkedIn)" value="${escapeHtml(c.label)}" onblur="dbData.contacts[${i}].label=this.value">
+                        <input placeholder="URL" value="${c.url}" onblur="dbData.contacts[${i}].url=this.value">
+                        Icon: <input type="file" onchange="handleUpload(this, 'contact-icon', ${i})">
+                        <button class="btn-del" style="width:100%; margin-top:5px;" onclick="dbData.contacts.splice(${i},1); render()">Delete</button>
+                    </div>
+                </div>`;
+        });
+    }
+
+    // Helper functions
+    function addMod(idx) {
+        const n = document.getElementById(`m-n-${idx}`).value;
+        const g = document.getElementById(`m-g-${idx}`).value;
+        if(n) { if(!dbData.quals[idx].mods) dbData.quals[idx].mods = []; dbData.quals[idx].mods.push({n, g}); render(); }
+    }
+    function addKeyword(idx) {
+        const k = document.getElementById(`p-k-${idx}`).value;
+        if(k) { if(!dbData.projects[idx].keywords) dbData.projects[idx].keywords = []; dbData.projects[idx].keywords.push(k); render(); }
+    }
+    function addCertSkill(idx) {
+        const s = document.getElementById(`c-s-${idx}`).value;
+        if(s) { if(!dbData.certificates[idx].skills) dbData.certificates[idx].skills = []; dbData.certificates[idx].skills.push(s); render(); }
+    }
+    function addObj(type) {
+        if(type==='cert') dbData.certificates.push({name:"Certificate Name", issuer:"Provider", date:"2024", url:"", skills:[]});
+        if(type==='qual') dbData.quals.push({name:"New Degree", inst:"University", start:"2021", end:"2024", dur:"3 Years", avg:"0%", mods:[], certUrl:"", recUrl:""});
+        if(type==='skill-cat') dbData.skillCats.push({cat:"New Category", items:[]});
+        if(type==='project') dbData.projects.push({name:"Project Title", desc:"Description here...", img:"", git:"", live:"", keywords:[]});
+        if(type==='exp') dbData.exps.push({role:"Role", company:"Company", start:"2023", end:"Present", tasks:"Responsibilities..."});
+        if(type==='contact') dbData.contacts.push({label:"Social", url:"https://...", icon:""});
+        render();
+    }
+
+    async function handleUpload(input, type, idx) {
+        if(!input.files[0]) return;
+        const formData = new FormData(); formData.append('file', input.files[0]);
+        try {
+            const res = await fetch('/api/upload', { method: 'POST', body: formData });
+            if (!res.ok) { if (res.status === 401) alert("Session expired. Please login again."); else alert("Upload failed."); return; }
+            const data = await res.json();
+            if(type === 'profile') dbData.pImg = data.url;
+            if(type === 'cv') dbData.cvUrl = data.url;
+            if(type === 'q-c') dbData.quals[idx].certUrl = data.url;
+            if(type === 'q-r') dbData.quals[idx].recUrl = data.url;
+            if(type === 'p-img') dbData.projects[idx].img = data.url;
+            if(type === 'standalone-cert') dbData.certificates[idx].url = data.url;
+            if(type === 'contact-icon') dbData.contacts[idx].icon = data.url;
+            alert("Upload Success!");
+            render();
+        } catch(e) { alert("Upload Failed."); }
+    }
+
+    async function saveData() {
+        dbData.name = document.getElementById('p-name').innerText;
+        dbData.job = document.getElementById('p-job').innerText;
+        dbData.desc = document.getElementById('p-desc').innerText;
+        const emailInput = document.getElementById('edit-email');
+        const phoneInput = document.getElementById('edit-phone');
+        if (emailInput) dbData.contactInfo.email = emailInput.value;
+        if (phoneInput) dbData.contactInfo.phone = phoneInput.value;
+        const extra = document.getElementById('extra-knowledge');
+        if (extra) dbData.extraKnowledge = extra.value;
+        const res = await fetch('/api/update-data', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(dbData) });
+        if (res.ok) {
+            alert("Database Updated Successfully!");
+            await loadDataFromServer();
+            render();
+        } else if (res.status === 401) alert("Session expired. Please login again.");
+        else alert("Update failed.");
+    }
+
+    function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, function(m){ if(m === '&') return '&amp;'; if(m === '<') return '&lt;'; if(m === '>') return '&gt;'; return m;}); }
+
+    // -------------------- CHATBOT --------------------
+    function getTimeBasedGreeting() {
+        const hour = new Date().getHours();
+        let greeting = "";
+        if (hour < 12) greeting = "Good morning";
+        else if (hour < 18) greeting = "Good afternoon";
+        else greeting = "Good evening";
+        return `${greeting}, I'm Alwande Mbonambi – a digital clone of the original. You can ask me anything: from my personal life and career ambitions to what I'm working on right now, or exactly what you need that might be in this portfolio.`;
+    }
+
+    function setInitialChatMessage() {
+        const messagesDiv = document.getElementById('chat-messages');
+        if (messagesDiv && messagesDiv.children.length === 0) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'message bot';
+            msgDiv.innerHTML = `<div class="bubble">${getTimeBasedGreeting()}</div>`;
+            messagesDiv.appendChild(msgDiv);
+        }
+    }
+
+    const chatIcon = document.getElementById('chatbot-icon');
+    const chatWindow = document.getElementById('chatbot-window');
+    const closeChat = document.getElementById('close-chat');
+    const sendBtn = document.getElementById('send-chat');
+    const chatInput = document.getElementById('chat-input');
+    const messagesDiv = document.getElementById('chat-messages');
+
+    chatIcon.onclick = () => {
+        chatWindow.style.display = 'flex';
+        setInitialChatMessage();
+    };
+    closeChat.onclick = () => { chatWindow.style.display = 'none'; };
+
+    function addMessage(text, isUser) {
+        const msgDiv = document.createElement('div');
+        msgDiv.className = `message ${isUser ? 'user' : 'bot'}`;
+        msgDiv.innerHTML = `<div class="bubble">${text.replace(/\n/g, '<br>')}</div>`;
+        messagesDiv.appendChild(msgDiv);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+    async function sendMessage() {
+        const question = chatInput.value.trim();
+        if (!question) return;
+        addMessage(question, true);
+        chatInput.value = '';
+        const typingDiv = document.createElement('div');
+        typingDiv.className = 'message bot';
+        typingDiv.innerHTML = '<div class="bubble">Typing...</div>';
+        messagesDiv.appendChild(typingDiv);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+        try {
+            const res = await fetch('/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: question })
+            });
+            const data = await res.json();
+            messagesDiv.removeChild(typingDiv);
+            if (data.answer) addMessage(data.answer, false);
+            else if (data.error) addMessage("Sorry, I'm having trouble connecting. Please try again later.", false);
+            else addMessage("Sorry, I couldn't process that. Please try again.", false);
+        } catch (err) {
+            messagesDiv.removeChild(typingDiv);
+            addMessage("Network error. Please check your connection.", false);
+        }
+    }
+
+    sendBtn.onclick = sendMessage;
+    chatInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
+
+    // Mobile menu toggle
+    document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+        document.getElementById('nav-right').classList.toggle('show');
+    });
+
+    // -------------------- LOAD DATA ON START --------------------
+    window.onload = async () => {
+        await loadDataFromServer();
+        const authRes = await fetch('/api/check-auth');
+        const auth = await authRes.json();
+        if (auth.isAdmin) { 
+            isAdmin = true; 
+            document.body.classList.add('admin-mode'); 
+        }
+        render();
+        setInitialChatMessage();
+    };
+</script>
+</body>
+</html>
