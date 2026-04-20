@@ -25,9 +25,20 @@ if firebase_key_b64:
         f.write(base64.b64decode(firebase_key_b64))
 
 # --- FIREBASE SETUP ---
+import os
+import firebase_admin
+from firebase_admin import credentials
+
+# Try Render's secret file path first, then local file
+firebase_key_path = '/etc/secrets/serviceAccountKey.json'
+if not os.path.exists(firebase_key_path):
+    firebase_key_path = 'serviceAccountKey.json'
+
 if not firebase_admin._apps:
-    cred = credentials.Certificate("serviceAccountKey.json")
+    cred = credentials.Certificate(firebase_key_path)
     firebase_admin.initialize_app(cred)
+    print(f"✅ Firebase initialized from {firebase_key_path}")
+
 db = firestore.client()
 
 # --- CLOUDINARY SETUP ---
