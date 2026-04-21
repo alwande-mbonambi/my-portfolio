@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Alwande Mbonambi's Portfolio</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
     <style>
         :root {
             --accent: #d4af37;
@@ -30,11 +32,11 @@
             position: sticky;
             top: 0;
             background: white;
-            padding: 0.8rem 5%;
+            padding: 0.8rem 2%;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            box-shadow: 0 30px 10px rgba(0,0,0,0.05);
             z-index: 1000;
             flex-wrap: wrap;
         }
@@ -106,6 +108,10 @@
             border: 4px solid var(--accent);
             position: relative;
             background: #eee;
+            cursor: grab;
+        }
+        .profile-circle:active {
+            cursor: grabbing;
         }
         .profile-circle img {
             width: 100%;
@@ -115,6 +121,7 @@
             position: absolute;
             top: 0;
             left: 0;
+            pointer-events: none;
         }
         .home-content {
             flex: 1;
@@ -135,7 +142,7 @@
             background: white;
             padding: 20px;
             border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            box-shadow: 50 50px 50px rgba(0,0,0,0.05);
             transition: all 0.25s ease;
             display: flex;
             flex-direction: column;
@@ -152,6 +159,9 @@
         }
         body.admin-mode .admin-only {
             display: block !important;
+        }
+        body.admin-mode .admin-only-flex {
+            display: flex !important;
         }
         .admin-controls {
             background: #f7fafc;
@@ -193,7 +203,17 @@
             cursor: pointer;
             font-size: 0.7rem;
         }
-        input, textarea {
+        .file-pill {
+            background: #e2e8f0;
+            padding: 5px 10px;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin: 5px 5px 0 0;
+        }
+        input, textarea, select {
             width: 100%;
             padding: 10px;
             margin: 8px 0;
@@ -217,11 +237,40 @@
             align-items: center;
             margin-top: 30px;
         }
+        body.admin-mode .social-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
         .social-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 6px;
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            min-width: 100px;
+        }
+        /* Fix social links grid overflow - wrap file-pill content */
+        body.admin-mode .social-item .admin-controls {
+            overflow-x: auto;
+        }
+        body.admin-mode .social-item .admin-controls .file-pill {
+            flex-wrap: wrap;
+            justify-content: center;
+            white-space: normal;
+        }
+        body.admin-mode .social-item .admin-controls .mini-btn,
+        body.admin-mode .social-item .admin-controls .btn-del {
+            white-space: nowrap;
+        }
+        /* Make buttons smaller as requested earlier */
+        body.admin-mode .social-item .admin-controls .mini-btn,
+        body.admin-mode .social-item .admin-controls .btn-del {
+            padding: 4px 8px;
+            font-size: 0.7rem;
+        }
+        body.admin-mode .social-item .file-pill button {
+            padding: 2px 6px;
+            font-size: 0.65rem;
         }
         #auth-modal {
             display: none;
@@ -237,13 +286,48 @@
             width: 280px;
         }
         
-        /* Keyword hover */
-        .tag, .card span[style*="background:var(--gray)"] {
-            display: inline-block;
-            transition: transform 0.15s ease;
+        /* Keyword / module small style - only for admin drag items */
+        .keyword-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--gray);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            margin: 4px;
+            cursor: grab;
         }
-        .tag:hover, .card span[style*="background:var(--gray)"]:hover {
-            transform: scale(1.02);
+        .keyword-item:active {
+            cursor: grabbing;
+        }
+        .keyword-item .drag-icon {
+            cursor: grab;
+            color: #718096;
+            font-size: 0.7rem;
+        }
+        .keyword-item input {
+            width: auto;
+            padding: 2px 4px;
+            margin: 0;
+            font-size: 0.75rem;
+        }
+        details.collapse-keywords {
+            margin-top: 8px;
+        }
+        details.collapse-keywords summary {
+            cursor: pointer;
+            font-size: 0.75rem;
+            color: #2d3748;
+            font-weight: bold;
+        }
+        
+        /* Skills public view */
+        .skill-public-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
         }
         
         /* Chatbot */
@@ -325,6 +409,31 @@
             cursor: pointer;
         }
         
+        /* Drag and drop cursor */
+        .sortable-drag {
+            opacity: 0.5;
+            background: #fef5e7;
+        }
+        
+        /* Contact side by side on laptop */
+        .contact-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: space-between;
+        }
+        .contact-text-item {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        /* Duration number input small */
+        .duration-input {
+            width: 80px;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        
         /* --- MOBILE RESPONSIVE STYLES --- */
         @media (max-width: 768px) {
             nav {
@@ -393,31 +502,16 @@
                 bottom: 15px;
                 right: 15px;
             }
-            
-            /* Compact contact section on mobile */
+            .contact-row {
+                flex-direction: column;
+                gap: 15px;
+            }
             .contact-text-item {
-                flex-direction: row !important;
-                align-items: center !important;
-                gap: 12px !important;
-                padding: 8px 0 !important;
-            }
-            .contact-text-item > div:first-child {
-                width: 32px !important;
-                height: 32px !important;
-                font-size: 1.2rem !important;
-            }
-            .contact-text-item span:first-of-type {
-                font-size: 0.7rem !important;
-            }
-            .contact-text-item span[id*="contact-"] {
-                font-size: 0.9rem !important;
+                width: 100%;
             }
             .social-bar {
                 gap: 15px;
                 margin-top: 20px;
-            }
-            .social-item {
-                width: 60px;
             }
             .contact-icon-img {
                 width: 40px;
@@ -426,12 +520,15 @@
             .social-item span {
                 font-size: 0.7rem;
             }
+            body.admin-mode .social-bar {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            }
         }
         
         @media (max-width: 480px) {
             .chatbot-window {
                 width: calc(100% - 30px);
-                right: 15px;
+                right: 20px;
                 bottom: 70px;
                 height: 420px;
             }
@@ -456,7 +553,6 @@
         <a href="#certs">Certificates</a>
         <a href="#exp">Experience</a>
         <a href="#contact">Contact</a>
-        <!-- Admin-only link to AI Knowledge section -->
         <a href="#ai-knowledge" class="admin-only" style="display:none;">Chatbot</a>
         <button id="save-btn" class="admin-only mini-btn accent" onclick="saveData()" style="margin-left: 0;">SYNC DATA</button>
         <button id="logout-btn" class="admin-only mini-btn" onclick="logout()">Logout</button>
@@ -466,16 +562,20 @@
 <section id="home">
     <div class="profile-wrapper">
         <div class="profile-container">
-            <div class="profile-circle">
+            <div class="profile-circle" id="profile-circle">
                 <img id="p-img" src="" alt="Profile">
             </div>
-            <div class="admin-only" style="width: 100%;">
-                <input type="file" onchange="handleUpload(this, 'profile')">
-                <div style="font-size: 0.7rem; margin-top:10px; background: #eee; padding: 10px; border-radius: 8px;">
-                    Zoom: <input type="range" min="1" max="4" step="0.01" id="z-in" oninput="updateProfileStyle()"><br>
-                    Horiz: <input type="range" min="-100" max="100" step="1" id="x-in" oninput="updateProfileStyle()"><br>
-                    Vert: <input type="range" min="-100" max="100" step="1" id="y-in" oninput="updateProfileStyle()">
+            <div class="admin-only" style="width: 100%; text-align: center;">
+                <div class="file-pill" style="background: #e2e8f0;">
+                    <button class="mini-btn" style="padding:4px 12px;" onclick="document.getElementById('profile-upload').click()">Change Portfolio Photo</button>
+                    <button class="btn-del" style="padding:4px 12px;" onclick="if(confirm('Remove profile photo?')) { dbData.pImg=''; render(); }">Remove Photo</button>
+                    <input type="file" id="profile-upload" style="display:none;" onchange="handleUpload(this, 'profile')">
                 </div>
+                <div style="margin-top: 10px;">
+                    <span style="font-size:0.7rem; color:#000;">Zoom:</span>
+                    <input type="range" min="1" max="4" step="0.01" id="z-in" oninput="updateProfileStyle()" style="width: 120px;">
+                </div>
+                <div style="font-size:0.65rem; color:#000; margin-top:4px;">(Drag image to reposition)</div>
             </div>
         </div>
         <div class="home-content">
@@ -485,8 +585,12 @@
             <div class="btn-row">
                 <a id="cv-btn" href="#" target="_blank" class="mini-btn accent" style="display:none;"><i class="fas fa-file-pdf"></i> View CV</a>
                 <div class="admin-only admin-controls" style="margin-top:0;">
-                    Upload CV: <input type="file" onchange="handleUpload(this, 'cv')">
-                    <button class="btn-del" onclick="dbData.cvUrl=''; render()">Remove CV</button>
+                    <div class="file-pill">
+                        <span>CV file</span>
+                        <button class="mini-btn" style="padding:2px 8px;" onclick="document.getElementById('cv-upload-input').click()">Upload</button>
+                        <button class="btn-del" style="padding:2px 8px;" onclick="if(confirm('Remove CV file?')) { dbData.cvUrl=''; render(); }">Remove</button>
+                        <input type="file" id="cv-upload-input" style="display:none;" onchange="handleUpload(this, 'cv')">
+                    </div>
                 </div>
             </div>
         </div>
@@ -525,21 +629,25 @@
 
 <section id="contact" style="background: var(--dark); color: white;">
     <h2 style="color: white; border-color: white;">Get In Touch</h2>
-    <div id="contact-text-list" style="display: flex; flex-direction: column; gap: 15px;">
-        <div class="contact-text-item" style="display: flex; align-items: center; gap: 15px; padding: 10px 0; flex-wrap: wrap;">
-            <div style="width: 42px; height: 42px; background: rgba(255,255,255,0.1); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;"><i class="fas fa-envelope"></i></div>
-            <div style="display:flex; flex-direction:column;">
-                <span style="font-size:0.8rem; opacity:0.7;">Email</span>
-                <span id="contact-email" style="font-size:1.1rem; font-weight:500;"></span>
-                <div class="admin-only"><input id="edit-email" placeholder="Email" style="margin-top: 6px;"></div>
+    <div class="contact-row">
+        <div class="contact-text-item">
+            <div style="display: flex; align-items: center; gap: 15px; padding: 10px 0;">
+                <div style="width: 42px; height: 42px; background: rgba(255,255,255,0.1); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;"><i class="fas fa-envelope"></i></div>
+                <div style="display:flex; flex-direction:column;">
+                    <span style="font-size:0.8rem; opacity:0.7;">Email</span>
+                    <span id="contact-email" style="font-size:1.1rem; font-weight:500;"></span>
+                    <div class="admin-only"><input id="edit-email" placeholder="Email" style="margin-top: 6px;"></div>
+                </div>
             </div>
         </div>
-        <div class="contact-text-item" style="display: flex; align-items: center; gap: 15px; padding: 10px 0; flex-wrap: wrap;">
-            <div style="width: 42px; height: 42px; background: rgba(255,255,255,0.1); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;"><i class="fas fa-phone"></i></div>
-            <div style="display:flex; flex-direction:column;">
-                <span style="font-size:0.8rem; opacity:0.7;">Phone Number</span>
-                <span id="contact-phone" style="font-size:1.1rem; font-weight:500;"></span>
-                <div class="admin-only"><input id="edit-phone" placeholder="Phone Number"></div>
+        <div class="contact-text-item">
+            <div style="display: flex; align-items: center; gap: 15px; padding: 10px 0;">
+                <div style="width: 42px; height: 42px; background: rgba(255,255,255,0.1); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;"><i class="fas fa-phone"></i></div>
+                <div style="display:flex; flex-direction:column;">
+                    <span style="font-size:0.8rem; opacity:0.7;">Phone Number</span>
+                    <span id="contact-phone" style="font-size:1.1rem; font-weight:500;"></span>
+                    <div class="admin-only"><input id="edit-phone" placeholder="Phone Number"></div>
+                </div>
             </div>
         </div>
     </div>
@@ -548,15 +656,13 @@
 
     <!-- AI Extra Knowledge Section (Admin only) -->
     <div id="ai-knowledge" class="admin-only" style="margin-top: 40px; background: rgba(255,255,255,0.1); padding: 20px; border-radius: 20px;">
-        <h3 style="color: var(--accent); margin-bottom: 15px;">🧠 AI Extra Knowledge</h3>
+        <h3 style="color: var(--accent); margin-bottom: 15px;">AI Extra Knowledge</h3>
         <p style="font-size: 0.85rem; margin-bottom: 10px;">Add personal info (age, hometown, hobbies, background, etc.) for my chatbot answers.</p>
         <textarea id="extra-knowledge" rows="6" placeholder="e.g., I am 25 years old, grew up in Durban, love hiking and chess..." style="width:100%; background: white; color: black;"></textarea>
-        <div style="margin-top: 15px;">
-            <label style="display: block; margin-bottom: 5px;">Upload .txt or .pdf:</label>
-            <input type="file" id="knowledge-file" accept=".txt,.pdf">
-            <button class="mini-btn accent" onclick="uploadKnowledgeFile()" style="margin-top: 10px;">Upload & Add</button>
-        </div>
-        <div style="margin-top: 15px;">
+        <div style="margin-top: 15px; display: flex; gap: 10px; flex-wrap: wrap;">
+            <button class="mini-btn accent" onclick="saveExtraKnowledge()">Save Knowledge</button>
+            <button class="mini-btn" onclick="document.getElementById('knowledge-file').click()">Upload file</button>
+            <input type="file" id="knowledge-file" accept=".txt,.pdf" style="display:none;" onchange="uploadKnowledgeFile()">
             <button class="btn-del" onclick="clearExtraKnowledge()">Clear All Extra Knowledge</button>
         </div>
     </div>
@@ -574,7 +680,7 @@
 </div>
 <div class="chatbot-window" id="chatbot-window">
     <div class="chatbot-header">
-        <span>💬 Ask Alwande</span>
+        <span>Ask Alwande</span>
         <span style="cursor:pointer;" id="close-chat">✕</span>
     </div>
     <div class="chatbot-messages" id="chat-messages"></div>
@@ -594,14 +700,126 @@
         extraKnowledge: ""
     };
     let isAdmin = false;
+    let sortableInstances = [];
+    let detailsOpenState = {}; // store open/close state of details elements
+
+    // Helper to format YYYY-MM to "YYYY MMM"
+    function formatMonth(dateStr) {
+        if (!dateStr || dateStr === 'Present') return dateStr;
+        const [year, month] = dateStr.split('-');
+        const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        return `${year} ${monthNames[parseInt(month)-1]}`;
+    }
+
+    // Helper to format duration number to "X Year(s)"
+    function formatDuration(years) {
+        if (!years) return '';
+        const num = parseInt(years);
+        if (isNaN(num)) return years;
+        return num === 1 ? '1 Year' : `${num} Years`;
+    }
+
+    // Save open/close state of all details elements before render
+    function saveDetailsState() {
+        detailsOpenState = {};
+        document.querySelectorAll('details.collapse-keywords').forEach((details, idx) => {
+            detailsOpenState[idx] = details.open;
+        });
+    }
+
+    // Restore open/close state after render
+    function restoreDetailsState() {
+        document.querySelectorAll('details.collapse-keywords').forEach((details, idx) => {
+            if (detailsOpenState[idx] !== undefined) {
+                details.open = detailsOpenState[idx];
+            }
+        });
+    }
+
+    // Destroy all Sortable instances before re-render
+    function destroySortables() {
+        sortableInstances.forEach(s => s.destroy());
+        sortableInstances = [];
+    }
+
+    // Initialize drag & drop on containers (for main items)
+    function initSortable(containerId, onUpdateCallback) {
+        const el = document.getElementById(containerId);
+        if (!el) return;
+        const sortable = new Sortable(el, {
+            animation: 150,
+            handle: '.drag-handle',
+            ghostClass: 'sortable-drag',
+            onEnd: onUpdateCallback
+        });
+        sortableInstances.push(sortable);
+    }
 
     // -------------------- PROFILE & ADMIN --------------------
     function updateProfileStyle() {
         dbData.pZoom = document.getElementById('z-in').value;
-        dbData.pX = document.getElementById('x-in').value;
-        dbData.pY = document.getElementById('y-in').value;
         const img = document.getElementById('p-img');
         img.style.transform = `scale(${dbData.pZoom}) translate(${dbData.pX}%, ${dbData.pY}%)`;
+    }
+
+    // Make profile image draggable to adjust X/Y (mouse + touch)
+    function initProfileDragging() {
+        const circle = document.getElementById('profile-circle');
+        let isDragging = false;
+        let startX, startY, startPx, startPy;
+
+        function startDrag(clientX, clientY) {
+            if (!isAdmin) return;
+            isDragging = true;
+            startX = clientX;
+            startY = clientY;
+            startPx = dbData.pX;
+            startPy = dbData.pY;
+            circle.style.cursor = 'grabbing';
+        }
+
+        function onMove(clientX, clientY) {
+            if (!isDragging) return;
+            const dx = clientX - startX;
+            const dy = clientY - startY;
+            let newX = startPx + (dx / 2);
+            let newY = startPy + (dy / 2);
+            newX = Math.min(100, Math.max(-100, newX));
+            newY = Math.min(100, Math.max(-100, newY));
+            dbData.pX = newX;
+            dbData.pY = newY;
+            const img = document.getElementById('p-img');
+            img.style.transform = `scale(${dbData.pZoom}) translate(${dbData.pX}%, ${dbData.pY}%)`;
+        }
+
+        function endDrag() {
+            isDragging = false;
+            circle.style.cursor = 'grab';
+        }
+
+        // Mouse events
+        circle.addEventListener('mousedown', (e) => {
+            if (!isAdmin) return;
+            startDrag(e.clientX, e.clientY);
+            e.preventDefault();
+        });
+        window.addEventListener('mousemove', (e) => onMove(e.clientX, e.clientY));
+        window.addEventListener('mouseup', endDrag);
+
+        // Touch events for mobile
+        circle.addEventListener('touchstart', (e) => {
+            if (!isAdmin) return;
+            const touch = e.touches[0];
+            startDrag(touch.clientX, touch.clientY);
+            e.preventDefault();
+        });
+        window.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            const touch = e.touches[0];
+            onMove(touch.clientX, touch.clientY);
+            e.preventDefault();
+        });
+        window.addEventListener('touchend', endDrag);
     }
 
     let clicks = 0;
@@ -636,6 +854,12 @@
             const data = await res.json();
             if (data && data.name) dbData = data;
             if (!dbData.contactInfo) dbData.contactInfo = { email: "", phone: "" };
+            if (!dbData.quals) dbData.quals = [];
+            if (!dbData.skillCats) dbData.skillCats = [];
+            if (!dbData.projects) dbData.projects = [];
+            if (!dbData.certificates) dbData.certificates = [];
+            if (!dbData.exps) dbData.exps = [];
+            if (!dbData.contacts) dbData.contacts = [];
         } catch(e) { console.error(e); }
     }
 
@@ -657,6 +881,12 @@
         fileInput.value = '';
     }
 
+    async function saveExtraKnowledge() {
+        dbData.extraKnowledge = document.getElementById('extra-knowledge').value;
+        await saveData();
+        alert("Extra knowledge saved!");
+    }
+
     async function clearExtraKnowledge() {
         if (confirm("Are you sure you want to clear ALL extra knowledge?")) {
             dbData.extraKnowledge = "";
@@ -668,6 +898,8 @@
 
     // -------------------- RENDER ALL SECTIONS --------------------
     function render() {
+        saveDetailsState();
+        destroySortables();
         ['quals', 'skillCats', 'projects', 'certificates', 'exps', 'contacts'].forEach(key => { if (!dbData[key]) dbData[key] = []; });
 
         document.getElementById('p-name').innerText = dbData.name;
@@ -682,8 +914,6 @@
         img.style.transform = `scale(${dbData.pZoom || 1}) translate(${dbData.pX || 0}%, ${dbData.pY || 0}%)`;
         if(isAdmin) {
             document.getElementById('z-in').value = dbData.pZoom || 1;
-            document.getElementById('x-in').value = dbData.pX || 0;
-            document.getElementById('y-in').value = dbData.pY || 0;
         }
 
         const cvBtn = document.getElementById('cv-btn');
@@ -723,154 +953,393 @@
         const extraTextarea = document.getElementById('extra-knowledge');
         if (extraTextarea) {
             extraTextarea.value = dbData.extraKnowledge || "";
-            extraTextarea.onchange = (e) => { dbData.extraKnowledge = e.target.value; render(); };
         }
 
-        // Qualifications
+        // ---------- Qualifications (drag & drop on parent container) ----------
         const qL = document.getElementById('qual-list'); qL.innerHTML = "";
         dbData.quals.forEach((q, i) => {
+            function filePill(fieldName, label, idx) {
+                const url = q[fieldName];
+                if (!url && !isAdmin) return '';
+                return `<div class="file-pill">
+                            <span>${label}</span>
+                            ${url ? `<a href="${url}" target="_blank" style="color:#2b6cb0;">View</a>` : ''}
+                            ${isAdmin ? `<button class="mini-btn" style="padding:2px 8px;" onclick="document.getElementById('q-${fieldName}-${idx}').click()">Upload</button>
+                                        <button class="btn-del" style="padding:2px 8px;" onclick="if(confirm('Remove ${label}?')) { dbData.quals[${idx}].${fieldName}=''; render(); }">Remove</button>
+                                        <input type="file" id="q-${fieldName}-${idx}" style="display:none;" onchange="handleUpload(this, 'q-${fieldName}', ${idx})">` : ''}
+                        </div>`;
+            }
+            // Determine average display
+            let avgDisplay = q.avg;
+            if (q.end === 'Present') {
+                avgDisplay = 'Awaiting';
+            } else if (q.avg && !isNaN(q.avg)) {
+                avgDisplay = q.avg + '%';
+            }
             qL.innerHTML += `
-                <div class="card">
+                <div class="card" data-idx="${i}">
+                    <div class="drag-handle" style="cursor:grab; text-align:center; margin-bottom:10px; ${!isAdmin ? 'display:none;' : ''}"><i class="fas fa-grip-vertical"></i></div>
                     <div>
                         <h3>${escapeHtml(q.name)}</h3>
                         <p style="font-size:0.9rem; color:#718096;">${escapeHtml(q.inst)}</p>
-                        <p style="font-size:0.8rem; margin:5px 0;">${q.start} - ${q.end} | Duration: ${q.dur}</p>
-                        <p style="font-weight:bold; color:var(--accent);">Average: ${q.avg}</p>
-                        <div style="margin-top:10px;"><div style="display:flex; flex-wrap:wrap; gap:8px;">
-                            ${(q.mods || []).map((m, mi) => `<span style="background:#edf2f7; padding:4px 8px; border-radius:4px; font-size:0.75rem; display:inline-block; transition:transform 0.15s;">${escapeHtml(m.n)} <b style="color:#2b6cb0">(${m.g}%)</b> ${isAdmin ? `<i class="fas fa-times" style="color:red; margin-left:5px; cursor:pointer;" onclick="dbData.quals[${i}].mods.splice(${mi},1); render()"></i>`:''}</span>`).join('')}
-                        </div></div>
+                        <p style="font-size:0.8rem; margin:5px 0;">${formatMonth(q.start) || ''} - ${q.end === 'Present' ? 'Present' : formatMonth(q.end)} | Duration: ${formatDuration(q.dur)}</p>
+                        <p style="font-weight:bold; color:var(--accent);">Average: ${avgDisplay}</p>
+                        <div class="btn-row">
+                            ${q.certUrl ? `<a href="${q.certUrl}" target="_blank" class="mini-btn">Certificate</a>` : ''}
+                            ${q.recUrl ? `<a href="${q.recUrl}" target="_blank" class="mini-btn">Academic Record</a>` : ''}
+                            ${q.compUrl ? `<a href="${q.compUrl}" target="_blank" class="mini-btn">Completion Letter</a>` : ''}
+                            ${q.regUrl ? `<a href="${q.regUrl}" target="_blank" class="mini-btn">Proof of Registration</a>` : ''}
+                        </div>
+                        <details class="collapse-keywords">
+                            <summary>Key Modules (${(q.mods || []).length})</summary>
+                            <div class="modules-container" data-qual="${i}" style="margin-top:10px;">
+                                ${(q.mods || []).map((m, mi) => `
+                                    <div class="keyword-item" data-module-idx="${mi}" style="${!isAdmin ? 'cursor:default;' : ''}">
+                                        ${isAdmin ? `<i class="fas fa-grip-vertical drag-icon" style="cursor:grab; margin-right:4px;"></i>` : ''}
+                                        ${isAdmin ? `<input value="${escapeHtml(m.n)}" onchange="dbData.quals[${i}].mods[${mi}].n=this.value" style="width:100px;">` : `<span>${escapeHtml(m.n)}</span>`}
+                                        <span><b>${m.g}%</b></span>
+                                        ${isAdmin ? `<i class="fas fa-trash" style="color:red; margin-left:5px; cursor:pointer;" onclick="if(confirm('Delete this module?')) { dbData.quals[${i}].mods.splice(${mi},1); render(); }"></i>` : ''}
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </details>
                     </div>
-                    <div class="btn-row">
-                        ${q.certUrl ? `<a href="${q.certUrl}" target="_blank" class="mini-btn">View Certificate</a>` : ''}
-                        ${q.recUrl ? `<a href="${q.recUrl}" target="_blank" class="mini-btn">Academic Record</a>` : ''}
-                    </div>
-                    <div class="admin-only admin-controls">
-                        <input value="${escapeHtml(q.name)}" onblur="dbData.quals[${i}].name=this.value" placeholder="Deg Name">
-                        <input value="${escapeHtml(q.inst)}" onblur="dbData.quals[${i}].inst=this.value" placeholder="Inst">
-                        <div style="display:flex; gap:5px;"><input placeholder="Start" value="${q.start}" onblur="dbData.quals[${i}].start=this.value"><input placeholder="End" value="${q.end}" onblur="dbData.quals[${i}].end=this.value"></div>
-                        <input value="${q.dur}" onblur="dbData.quals[${i}].dur=this.value" placeholder="Duration">
-                        <input value="${q.avg}" onblur="dbData.quals[${i}].avg=this.value" placeholder="Avg%">
+                    ${isAdmin ? `
+                    <div class="admin-controls">
+                        <input value="${escapeHtml(q.name)}" onblur="dbData.quals[${i}].name=this.value" placeholder="Degree Name">
+                        <input value="${escapeHtml(q.inst)}" onblur="dbData.quals[${i}].inst=this.value" placeholder="Institution">
+                        <div style="display:flex; gap:5px; align-items:center; flex-wrap:wrap;">
+                            <input type="month" value="${q.start || ''}" onchange="dbData.quals[${i}].start=this.value" style="width:45%;">
+                            <input type="month" value="${q.end !== 'Present' ? q.end : ''}" onchange="dbData.quals[${i}].end=this.value" style="width:45%;" id="end-date-${i}">
+                            <label style="display:flex; align-items:center; gap:4px;"><input type="checkbox" onchange="if(this.checked) { dbData.quals[${i}].end='Present'; document.getElementById('end-date-${i}').value=''; updateAvgOnPresent(${i}); } else { dbData.quals[${i}].end=''; }" ${q.end === 'Present' ? 'checked' : ''}> Present</label>
+                        </div>
+                        <div style="display:flex; gap:5px; align-items:center;">
+                            <input type="number" min="0" step="1" value="${parseInt(q.dur) || ''}" onchange="dbData.quals[${i}].dur=this.value" placeholder="Years" class="duration-input"> <span>Year(s)</span>
+                        </div>
+                        <div style="display:flex; gap:5px; align-items:center;">
+                            <input type="number" step="any" value="${q.avg && !isNaN(q.avg) ? q.avg : ''}" onchange="dbData.quals[${i}].avg=this.value" placeholder="Average" style="width:100px;" ${q.end === 'Present' ? 'disabled' : ''}> <span>%</span>
+                        </div>
                         <div style="display:flex; gap:5px;"><input id="m-n-${i}" placeholder="Module"><input id="m-g-${i}" placeholder="%" style="width:50px;"><button type="button" class="mini-btn" onclick="addMod(${i})">+</button></div>
-                        Cert: <input type="file" onchange="handleUpload(this, 'q-c', ${i})"> ${q.certUrl ? `<button class="btn-del" onclick="dbData.quals[${i}].certUrl=''; render()">Delete File</button>`:''}
-                        Rec: <input type="file" onchange="handleUpload(this, 'q-r', ${i})"> ${q.recUrl ? `<button class="btn-del" onclick="dbData.quals[${i}].recUrl=''; render()">Delete File</button>`:''}
-                        <button class="btn-del" style="margin-top:10px; width:100%;" onclick="dbData.quals.splice(${i},1); render()">Delete Qualification Entry</button>
+                        ${filePill('certUrl', 'Certificate', i)}
+                        ${filePill('recUrl', 'Academic Record', i)}
+                        ${filePill('compUrl', 'Completion Letter', i)}
+                        ${filePill('regUrl', 'Proof of Registration', i)}
+                        <button class="btn-del" style="margin-top:10px;" onclick="if(confirm('Delete this qualification?')) { dbData.quals.splice(${i},1); render(); }">Delete Qualification</button>
                     </div>
+                    ` : ''}
                 </div>`;
         });
+        if (isAdmin) {
+            initSortable('qual-list', () => {
+                const newOrder = Array.from(document.querySelectorAll('#qual-list > .card')).map(card => parseInt(card.dataset.idx));
+                const reordered = newOrder.map(idx => dbData.quals[idx]);
+                dbData.quals = reordered;
+                render();
+            });
+            document.querySelectorAll('.modules-container').forEach(container => {
+                const sortable = new Sortable(container, {
+                    animation: 150,
+                    handle: '.drag-icon',
+                    ghostClass: 'sortable-drag',
+                    onEnd: () => {
+                        const qualIdx = parseInt(container.dataset.qual);
+                        const newMods = Array.from(container.children).map(child => {
+                            const origIdx = parseInt(child.dataset.moduleIdx);
+                            return dbData.quals[qualIdx].mods[origIdx];
+                        });
+                        dbData.quals[qualIdx].mods = newMods;
+                        render();
+                    }
+                });
+                sortableInstances.push(sortable);
+            });
+        }
 
-        // Skills
+        // ---------- Skills & Mastery (public view: simple list; admin: draggable items) ----------
         const sC = document.getElementById('skills-container'); sC.innerHTML = "";
         dbData.skillCats.forEach((cat, i) => {
-            let h = `<div class="card"><h4 style="margin-bottom:15px; border-bottom:1px solid #eee; padding-bottom:5px;">${escapeHtml(cat.cat)}</h4>`;
-            (cat.items || []).forEach((s, si) => {
-                h += `<div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:0.9rem;">
-                    <span>${escapeHtml(s.n)}</span>
-                    <div style="display:flex; align-items:center; gap:5px;">
-                        ${[1,2,3,4,5].map(v => `<span style="color:${v<=s.s?'var(--accent)':'#cbd5e0'}; cursor:${isAdmin?'pointer':'default'}" onclick="${isAdmin ? `dbData.skillCats[${i}].items[${si}].s=${v}; render()` : ''}">★</span>`).join('')}
-                        ${isAdmin ? `<i class="fas fa-trash" style="color:red; cursor:pointer; font-size:0.7rem;" onclick="dbData.skillCats[${i}].items.splice(${si},1); render()"></i>` : ''}
-                    </div>
-                </div>`;
-            });
-            if(isAdmin) {
-                h += `<div class="admin-only admin-controls">
-                    <input value="${escapeHtml(cat.cat)}" onblur="dbData.skillCats[${i}].cat=this.value" placeholder="Cat Name">
-                    <button class="mini-btn" type="button" onclick="dbData.skillCats[${i}].items.push({n:'Skill',s:3}); render()">+ Skill</button>
-                    <button class="btn-del" onclick="dbData.skillCats.splice(${i},1); render()">Delete Cat</button>
-                </div>`;
+            if (isAdmin) {
+                // Admin view: draggable cards with inline inputs
+                sC.innerHTML += `
+                    <div class="card" data-cat-idx="${i}">
+                        <div class="drag-handle" style="cursor:grab; text-align:center; margin-bottom:10px;"><i class="fas fa-grip-vertical"></i></div>
+                        <h4 style="margin-bottom:15px; border-bottom:1px solid #eee; padding-bottom:5px;">${escapeHtml(cat.cat)}</h4>
+                        <div class="skills-container-inner" data-cat="${i}">
+                            ${(cat.items || []).map((s, si) => `
+                                <div class="keyword-item" style="display:flex; justify-content:space-between; margin-bottom:8px; width:100%;" data-skill-idx="${si}">
+                                    <i class="fas fa-grip-vertical drag-icon" style="cursor:grab; margin-right:4px;"></i>
+                                    <input value="${escapeHtml(s.n)}" onchange="dbData.skillCats[${i}].items[${si}].n=this.value" style="width:60%; margin:0;">
+                                    <div style="display:flex; align-items:center; gap:5px;">
+                                        ${[1,2,3,4,5].map(v => `<span style="color:${v<=s.s?'var(--accent)':'#cbd5e0'}; cursor:pointer;" onclick="dbData.skillCats[${i}].items[${si}].s=${v}; render()">★</span>`).join('')}
+                                        <i class="fas fa-trash" style="color:red; cursor:pointer;" onclick="if(confirm('Delete this skill?')) { dbData.skillCats[${i}].items.splice(${si},1); render(); }"></i>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div class="admin-controls">
+                            <input value="${escapeHtml(cat.cat)}" onblur="dbData.skillCats[${i}].cat=this.value" placeholder="Category Name">
+                            <button class="mini-btn" onclick="dbData.skillCats[${i}].items.push({n:'New Skill',s:3}); render()">+ Skill</button>
+                            <button class="btn-del" style="margin-top:10px;" onclick="if(confirm('Delete this skill category?')) { dbData.skillCats.splice(${i},1); render(); }">Delete Category</button>
+                        </div>
+                    </div>`;
+            } else {
+                // Public view: clean list with stars
+                let skillsHtml = `<div class="card"><h4 style="margin-bottom:15px; border-bottom:1px solid #eee; padding-bottom:5px;">${escapeHtml(cat.cat)}</h4>`;
+                (cat.items || []).forEach(s => {
+                    skillsHtml += `<div class="skill-public-item">
+                        <span>${escapeHtml(s.n)}</span>
+                        <div>${[1,2,3,4,5].map(v => `<span style="color:${v<=s.s?'var(--accent)':'#cbd5e0'}">★</span>`).join('')}</div>
+                    </div>`;
+                });
+                skillsHtml += `</div>`;
+                sC.innerHTML += skillsHtml;
             }
-            h += `</div>`; sC.innerHTML += h;
         });
+        if (isAdmin) {
+            initSortable('skills-container', () => {
+                const newOrder = Array.from(document.querySelectorAll('#skills-container > .card')).map(card => parseInt(card.dataset.catIdx));
+                const reordered = newOrder.map(idx => dbData.skillCats[idx]);
+                dbData.skillCats = reordered;
+                render();
+            });
+            document.querySelectorAll('.skills-container-inner').forEach(container => {
+                const sortable = new Sortable(container, {
+                    animation: 150,
+                    handle: '.drag-icon',
+                    ghostClass: 'sortable-drag',
+                    onEnd: () => {
+                        const catIdx = parseInt(container.dataset.cat);
+                        const newSkills = Array.from(container.children).map(child => {
+                            const origIdx = parseInt(child.dataset.skillIdx);
+                            return dbData.skillCats[catIdx].items[origIdx];
+                        });
+                        dbData.skillCats[catIdx].items = newSkills;
+                        render();
+                    }
+                });
+                sortableInstances.push(sortable);
+            });
+        }
 
-        // Projects
+        // ---------- Projects (drag & drop) ----------
         const pL = document.getElementById('project-list'); pL.innerHTML = "";
         dbData.projects.forEach((p, i) => {
             pL.innerHTML += `
-                <div class="card">
+                <div class="card" data-proj-idx="${i}">
+                    <div class="drag-handle" style="cursor:grab; text-align:center; margin-bottom:10px; ${!isAdmin ? 'display:none;' : ''}"><i class="fas fa-grip-vertical"></i></div>
                     <img src="${p.img || 'https://via.placeholder.com/400x200'}" style="width:100%; height:160px; object-fit:cover; border-radius:8px; margin-bottom:15px;">
                     <h3>${escapeHtml(p.name)}</h3>
                     <p style="font-size:0.85rem; margin:10px 0; flex-grow:1;">${escapeHtml(p.desc)}</p>
-                    <div style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:10px;">
-                        ${(p.keywords || []).map((k, ki) => `<span style="background:var(--gray); padding:2px 8px; border-radius:12px; font-size:0.75rem; display:inline-block; transition:transform 0.15s;">${escapeHtml(k)} ${isAdmin ? `<i class="fas fa-times" style="color:red; cursor:pointer;" onclick="dbData.projects[${i}].keywords.splice(${ki},1); render()"></i>`:''}</span>`).join('')}
-                    </div>
+                    <details class="collapse-keywords">
+                        <summary>Keywords (${(p.keywords || []).length})</summary>
+                        <div class="keywords-container" data-proj="${i}" style="margin-top:10px;">
+                            ${(p.keywords || []).map((k, ki) => `
+                                <div class="keyword-item" data-keyword-idx="${ki}" style="${!isAdmin ? 'cursor:default;' : ''}">
+                                    ${isAdmin ? `<i class="fas fa-grip-vertical drag-icon" style="cursor:grab; margin-right:4px;"></i>` : ''}
+                                    ${isAdmin ? `<input value="${escapeHtml(k)}" onchange="dbData.projects[${i}].keywords[${ki}]=this.value" style="width:100px;">` : `<span>${escapeHtml(k)}</span>`}
+                                    ${isAdmin ? `<i class="fas fa-times" style="color:red; cursor:pointer;" onclick="if(confirm('Delete this keyword?')) { dbData.projects[${i}].keywords.splice(${ki},1); render(); }"></i>` : ''}
+                                </div>
+                            `).join('')}
+                        </div>
+                    </details>
                     <div class="btn-row">
                         ${p.git ? `<a href="${p.git}" target="_blank" class="mini-btn"><i class="fab fa-github"></i> Source</a>` : ''}
                         ${p.live ? `<a href="${p.live}" target="_blank" class="mini-btn accent"><i class="fas fa-link"></i> Live</a>` : ''}
                     </div>
-                    <div class="admin-only admin-controls">
+                    ${isAdmin ? `
+                    <div class="admin-controls">
                         <input value="${escapeHtml(p.name)}" onblur="dbData.projects[${i}].name=this.value" placeholder="Name">
                         <textarea onblur="dbData.projects[${i}].desc=this.value" placeholder="Desc">${escapeHtml(p.desc)}</textarea>
                         <div style="display:flex; gap:5px;"><input id="p-k-${i}" placeholder="Add Keyword"><button type="button" class="mini-btn" onclick="addKeyword(${i})">+</button></div>
-                        Img: <input type="file" onchange="handleUpload(this, 'p-img', ${i})">
+                        <div class="file-pill">
+                            <span>Project Image</span>
+                            ${p.img ? `<a href="${p.img}" target="_blank">View</a>` : ''}
+                            <button class="mini-btn" style="padding:2px 8px;" onclick="document.getElementById('p-img-${i}').click()">Upload</button>
+                            <button class="btn-del" style="padding:2px 8px;" onclick="if(confirm('Remove project image?')) { dbData.projects[${i}].img=''; render(); }">Remove</button>
+                            <input type="file" id="p-img-${i}" style="display:none;" onchange="handleUpload(this, 'p-img', ${i})">
+                        </div>
                         <input placeholder="Github Link" value="${p.git}" onblur="dbData.projects[${i}].git=this.value">
                         <input placeholder="Live Link" value="${p.live}" onblur="dbData.projects[${i}].live=this.value">
-                        <button class="btn-del" onclick="dbData.projects.splice(${i},1); render()">Delete Project</button>
+                        <button class="btn-del" style="margin-top:10px;" onclick="if(confirm('Delete this project?')) { dbData.projects.splice(${i},1); render(); }">Delete Project</button>
                     </div>
+                    ` : ''}
                 </div>`;
         });
+        if (isAdmin) {
+            initSortable('project-list', () => {
+                const newOrder = Array.from(document.querySelectorAll('#project-list > .card')).map(card => parseInt(card.dataset.projIdx));
+                const reordered = newOrder.map(idx => dbData.projects[idx]);
+                dbData.projects = reordered;
+                render();
+            });
+            document.querySelectorAll('.keywords-container').forEach(container => {
+                const sortable = new Sortable(container, {
+                    animation: 150,
+                    handle: '.drag-icon',
+                    ghostClass: 'sortable-drag',
+                    onEnd: () => {
+                        const projIdx = parseInt(container.dataset.proj);
+                        const newKeywords = Array.from(container.children).map(child => {
+                            const origIdx = parseInt(child.dataset.keywordIdx);
+                            return dbData.projects[projIdx].keywords[origIdx];
+                        });
+                        dbData.projects[projIdx].keywords = newKeywords;
+                        render();
+                    }
+                });
+                sortableInstances.push(sortable);
+            });
+        }
 
-        // Certificates
+        // ---------- Certificates (drag & drop) ----------
         const certL = document.getElementById('cert-list'); certL.innerHTML = "";
         dbData.certificates.forEach((c, i) => {
             certL.innerHTML += `
-                <div class="card">
+                <div class="card" data-cert-idx="${i}">
+                    <div class="drag-handle" style="cursor:grab; text-align:center; margin-bottom:10px; ${!isAdmin ? 'display:none;' : ''}"><i class="fas fa-grip-vertical"></i></div>
                     <h3>${escapeHtml(c.name)}</h3>
-                    <p style="font-size:0.85rem; color:#718096;">${escapeHtml(c.issuer)} | ${c.date}</p>
-                    <div style="display:flex; flex-wrap:wrap; gap:5px; margin:10px 0;">
-                        ${(c.skills || []).map((s, si) => `<span style="background:var(--gray); padding:2px 8px; border-radius:12px; font-size:0.75rem; display:inline-block; transition:transform 0.15s;">${escapeHtml(s)} ${isAdmin ? `<i class="fas fa-times" style="color:red; cursor:pointer;" onclick="dbData.certificates[${i}].skills.splice(${si},1); render()"></i>`:''}</span>`).join('')}
-                    </div>
+                    <p style="font-size:0.85rem; color:#718096;">${escapeHtml(c.issuer)} | ${formatMonth(c.date)}</p>
+                    <details class="collapse-keywords">
+                        <summary>Skills (${(c.skills || []).length})</summary>
+                        <div class="cert-skills-container" data-cert="${i}" style="margin-top:10px;">
+                            ${(c.skills || []).map((sk, ski) => `
+                                <div class="keyword-item" data-skill-idx="${ski}" style="${!isAdmin ? 'cursor:default;' : ''}">
+                                    ${isAdmin ? `<i class="fas fa-grip-vertical drag-icon" style="cursor:grab; margin-right:4px;"></i>` : ''}
+                                    ${isAdmin ? `<input value="${escapeHtml(sk)}" onchange="dbData.certificates[${i}].skills[${ski}]=this.value" style="width:100px;">` : `<span>${escapeHtml(sk)}</span>`}
+                                    ${isAdmin ? `<i class="fas fa-times" style="color:red; cursor:pointer;" onclick="if(confirm('Delete this skill?')) { dbData.certificates[${i}].skills.splice(${ski},1); render(); }"></i>` : ''}
+                                </div>
+                            `).join('')}
+                        </div>
+                    </details>
                     <div class="btn-row">
                         ${c.url ? `<a href="${c.url}" target="_blank" class="mini-btn accent">View Certificate</a>` : ''}
                     </div>
-                    <div class="admin-only admin-controls">
+                    ${isAdmin ? `
+                    <div class="admin-controls">
                         <input placeholder="Name" value="${escapeHtml(c.name)}" onblur="dbData.certificates[${i}].name=this.value">
                         <input placeholder="Issuer" value="${escapeHtml(c.issuer)}" onblur="dbData.certificates[${i}].issuer=this.value">
-                        <input placeholder="Date" value="${c.date}" onblur="dbData.certificates[${i}].date=this.value">
-                        <div style="display:flex; gap:5px;"><input id="c-s-${i}" placeholder="Add Skill/Keyword"><button type="button" class="mini-btn" onclick="addCertSkill(${i})">+</button></div>
-                        File: <input type="file" onchange="handleUpload(this, 'standalone-cert', ${i})">
-                        <button class="btn-del" onclick="dbData.certificates.splice(${i},1); render()">Delete Certificate</button>
+                        <input type="month" value="${c.date || ''}" onchange="dbData.certificates[${i}].date=this.value">
+                        <div style="display:flex; gap:5px;"><input id="c-s-${i}" placeholder="Add Skill"><button type="button" class="mini-btn" onclick="addCertSkill(${i})">+</button></div>
+                        <div class="file-pill">
+                            <span>Certificate File</span>
+                            ${c.url ? `<a href="${c.url}" target="_blank">View</a>` : ''}
+                            <button class="mini-btn" style="padding:2px 8px;" onclick="document.getElementById('cert-file-${i}').click()">Upload</button>
+                            <button class="btn-del" style="padding:2px 8px;" onclick="if(confirm('Remove certificate file?')) { dbData.certificates[${i}].url=''; render(); }">Remove</button>
+                            <input type="file" id="cert-file-${i}" style="display:none;" onchange="handleUpload(this, 'standalone-cert', ${i})">
+                        </div>
+                        <button class="btn-del" style="margin-top:10px;" onclick="if(confirm('Delete this certificate?')) { dbData.certificates.splice(${i},1); render(); }">Delete Certificate</button>
                     </div>
+                    ` : ''}
                 </div>`;
         });
+        if (isAdmin) {
+            initSortable('cert-list', () => {
+                const newOrder = Array.from(document.querySelectorAll('#cert-list > .card')).map(card => parseInt(card.dataset.certIdx));
+                const reordered = newOrder.map(idx => dbData.certificates[idx]);
+                dbData.certificates = reordered;
+                render();
+            });
+            document.querySelectorAll('.cert-skills-container').forEach(container => {
+                const sortable = new Sortable(container, {
+                    animation: 150,
+                    handle: '.drag-icon',
+                    ghostClass: 'sortable-drag',
+                    onEnd: () => {
+                        const certIdx = parseInt(container.dataset.cert);
+                        const newSkills = Array.from(container.children).map(child => {
+                            const origIdx = parseInt(child.dataset.skillIdx);
+                            return dbData.certificates[certIdx].skills[origIdx];
+                        });
+                        dbData.certificates[certIdx].skills = newSkills;
+                        render();
+                    }
+                });
+                sortableInstances.push(sortable);
+            });
+        }
 
-        // Experience
+        // ---------- Experience (drag & drop, dates moved to separate line) ----------
         const eL = document.getElementById('exp-list'); eL.innerHTML = "";
         dbData.exps.forEach((e, i) => {
             eL.innerHTML += `
-                <div class="card" style="margin-bottom:15px;">
-                    <div style="display:flex; justify-content:space-between;"><b>${escapeHtml(e.role)}</b> <span>${e.start} - ${e.end}</span></div>
+                <div class="card" data-exp-idx="${i}">
+                    <div class="drag-handle" style="cursor:grab; text-align:center; margin-bottom:10px; ${!isAdmin ? 'display:none;' : ''}"><i class="fas fa-grip-vertical"></i></div>
+                    <div><b>${escapeHtml(e.role)}</b></div>
                     <p style="color:var(--accent); font-weight:600;">${escapeHtml(e.company)}</p>
+                    <p style="font-size:0.8rem; margin:5px 0;">${formatMonth(e.start) || ''} - ${e.end === 'Present' ? 'Present' : formatMonth(e.end)}</p>
                     <p style="font-size:0.9rem; margin-top:10px; white-space:pre-wrap;">${escapeHtml(e.tasks)}</p>
-                    <div class="admin-only admin-controls">
+                    ${isAdmin ? `
+                    <div class="admin-controls">
                         <input value="${escapeHtml(e.role)}" onblur="dbData.exps[${i}].role=this.value" placeholder="Role">
                         <input value="${escapeHtml(e.company)}" onblur="dbData.exps[${i}].company=this.value" placeholder="Company">
-                        <div style="display:flex; gap:5px;"><input placeholder="Start" value="${e.start}" onblur="dbData.exps[${i}].start=this.value"><input placeholder="End" value="${e.end}" onblur="dbData.exps[${i}].end=this.value"></div>
+                        <div style="display:flex; gap:5px; align-items:center; flex-wrap:wrap;">
+                            <input type="month" value="${e.start || ''}" onchange="dbData.exps[${i}].start=this.value" style="width:45%;">
+                            <input type="month" value="${e.end !== 'Present' ? e.end : ''}" onchange="dbData.exps[${i}].end=this.value" style="width:45%;" id="exp-end-${i}">
+                            <label style="display:flex; align-items:center; gap:4px;"><input type="checkbox" onchange="if(this.checked) { dbData.exps[${i}].end='Present'; document.getElementById('exp-end-${i}').value=''; } else { dbData.exps[${i}].end=''; }" ${e.end === 'Present' ? 'checked' : ''}> Present</label>
+                        </div>
                         <textarea onblur="dbData.exps[${i}].tasks=this.value" placeholder="Tasks">${escapeHtml(e.tasks)}</textarea>
-                        <button class="btn-del" onclick="dbData.exps.splice(${i},1); render()">Delete Experience</button>
+                        <button class="btn-del" style="margin-top:10px;" onclick="if(confirm('Delete this experience?')) { dbData.exps.splice(${i},1); render(); }">Delete Experience</button>
                     </div>
+                    ` : ''}
                 </div>`;
         });
+        if (isAdmin) {
+            initSortable('exp-list', () => {
+                const newOrder = Array.from(document.querySelectorAll('#exp-list > .card')).map(card => parseInt(card.dataset.expIdx));
+                const reordered = newOrder.map(idx => dbData.exps[idx]);
+                dbData.exps = reordered;
+                render();
+            });
+        }
 
-        // Social contacts
+        // ---------- Social Contacts (drag & drop) ----------
         const socialBar = document.getElementById('social-icons-bar');
         socialBar.innerHTML = "";
         dbData.contacts.forEach((c, i) => {
             socialBar.innerHTML += `
-                <div class="social-item">
+                <div class="social-item" data-contact-idx="${i}">
+                    <div class="drag-handle" style="cursor:grab; text-align:center; margin-bottom:6px; ${!isAdmin ? 'display:none;' : ''}"><i class="fas fa-grip-vertical"></i></div>
                     <a href="${c.url}" target="_blank" style="text-decoration:none; color:white; display:flex; flex-direction:column; align-items:center; gap:5px;">
                         <img src="${c.icon || 'https://via.placeholder.com/50'}" class="contact-icon-img">
                         <span style="font-size:0.8rem; opacity:0.9;">${escapeHtml(c.label)}</span>
                     </a>
-                    <div class="admin-only admin-controls" style="width:200px;">
-                        <input placeholder="Label (e.g. LinkedIn)" value="${escapeHtml(c.label)}" onblur="dbData.contacts[${i}].label=this.value">
+                    ${isAdmin ? `
+                    <div class="admin-controls" style="margin-top:10px; width:100%;">
+                        <input placeholder="Label" value="${escapeHtml(c.label)}" onblur="dbData.contacts[${i}].label=this.value">
                         <input placeholder="URL" value="${c.url}" onblur="dbData.contacts[${i}].url=this.value">
-                        Icon: <input type="file" onchange="handleUpload(this, 'contact-icon', ${i})">
-                        <button class="btn-del" style="width:100%; margin-top:5px;" onclick="dbData.contacts.splice(${i},1); render()">Delete</button>
+                        <div class="file-pill">
+                            <span>Icon</span>
+                            ${c.icon ? `<a href="${c.icon}" target="_blank">View</a>` : ''}
+                            <button class="mini-btn" style="padding:2px 8px;" onclick="document.getElementById('contact-icon-${i}').click()">Upload</button>
+                            <button class="btn-del" style="padding:2px 8px;" onclick="if(confirm('Remove social icon?')) { dbData.contacts[${i}].icon=''; render(); }">Remove</button>
+                            <input type="file" id="contact-icon-${i}" style="display:none;" onchange="handleUpload(this, 'contact-icon', ${i})">
+                        </div>
+                        <button class="btn-del" style="margin-top:8px; width:100%;" onclick="if(confirm('Delete this social link?')) { dbData.contacts.splice(${i},1); render(); }">Delete</button>
                     </div>
+                    ` : ''}
                 </div>`;
         });
+        if (isAdmin) {
+            initSortable('social-icons-bar', () => {
+                const newOrder = Array.from(document.querySelectorAll('#social-icons-bar > .social-item')).map(item => parseInt(item.dataset.contactIdx));
+                const reordered = newOrder.map(idx => dbData.contacts[idx]);
+                dbData.contacts = reordered;
+                render();
+            });
+        }
+
+        restoreDetailsState();
     }
 
-    // Helper functions
+    function updateAvgOnPresent(qualIdx) {
+        const qual = dbData.quals[qualIdx];
+        if (qual.end === 'Present') {
+            qual.avg = '';
+            render();
+        }
+    }
+
+    // Helper functions for adding items
     function addMod(idx) {
         const n = document.getElementById(`m-n-${idx}`).value;
         const g = document.getElementById(`m-g-${idx}`).value;
@@ -885,11 +1354,11 @@
         if(s) { if(!dbData.certificates[idx].skills) dbData.certificates[idx].skills = []; dbData.certificates[idx].skills.push(s); render(); }
     }
     function addObj(type) {
-        if(type==='cert') dbData.certificates.push({name:"Certificate Name", issuer:"Provider", date:"2024", url:"", skills:[]});
-        if(type==='qual') dbData.quals.push({name:"New Degree", inst:"University", start:"2021", end:"2024", dur:"3 Years", avg:"0%", mods:[], certUrl:"", recUrl:""});
+        if(type==='cert') dbData.certificates.push({name:"Certificate Name", issuer:"Provider", date:"", url:"", skills:[]});
+        if(type==='qual') dbData.quals.push({name:"New Degree", inst:"University", start:"", end:"", dur:"", avg:"", mods:[], certUrl:"", recUrl:"", compUrl:"", regUrl:""});
         if(type==='skill-cat') dbData.skillCats.push({cat:"New Category", items:[]});
         if(type==='project') dbData.projects.push({name:"Project Title", desc:"Description here...", img:"", git:"", live:"", keywords:[]});
-        if(type==='exp') dbData.exps.push({role:"Role", company:"Company", start:"2023", end:"Present", tasks:"Responsibilities..."});
+        if(type==='exp') dbData.exps.push({role:"Role", company:"Company", start:"", end:"", tasks:"Responsibilities..."});
         if(type==='contact') dbData.contacts.push({label:"Social", url:"https://...", icon:""});
         render();
     }
@@ -903,8 +1372,10 @@
             const data = await res.json();
             if(type === 'profile') dbData.pImg = data.url;
             if(type === 'cv') dbData.cvUrl = data.url;
-            if(type === 'q-c') dbData.quals[idx].certUrl = data.url;
-            if(type === 'q-r') dbData.quals[idx].recUrl = data.url;
+            if(type === 'q-certUrl') dbData.quals[idx].certUrl = data.url;
+            if(type === 'q-recUrl') dbData.quals[idx].recUrl = data.url;
+            if(type === 'q-compUrl') dbData.quals[idx].compUrl = data.url;
+            if(type === 'q-regUrl') dbData.quals[idx].regUrl = data.url;
             if(type === 'p-img') dbData.projects[idx].img = data.url;
             if(type === 'standalone-cert') dbData.certificates[idx].url = data.url;
             if(type === 'contact-icon') dbData.contacts[idx].icon = data.url;
@@ -934,7 +1405,7 @@
 
     function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, function(m){ if(m === '&') return '&amp;'; if(m === '<') return '&lt;'; if(m === '>') return '&gt;'; return m;}); }
 
-    // -------------------- CHATBOT --------------------
+    // -------------------- CHATBOT (unchanged) --------------------
     function getTimeBasedGreeting() {
         const hour = new Date().getHours();
         let greeting = "";
@@ -1022,7 +1493,9 @@
         }
         render();
         setInitialChatMessage();
+        initProfileDragging();
     };
 </script>
 </body>
 </html>
+```
